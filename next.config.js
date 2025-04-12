@@ -4,9 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Update this to match your GitHub repository name
-  basePath: '/ROI-Calc-OLD',
-  assetPrefix: '/ROI-Calc-OLD/',
+  basePath: '/SAI-ROI-CALC-',
+  assetPrefix: '/SAI-ROI-CALC-/',
+  trailingSlash: true,
 }
 
 module.exports = nextConfig 
