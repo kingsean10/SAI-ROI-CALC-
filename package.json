@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "export": "next build && next export",
+    "deploy": "next build && next export && touch out/.nojekyll"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
