@@ -3,13 +3,11 @@ import { useForm } from "react-hook-form";
 import CountUp from "react-countup";
 import { VictoryBar, VictoryChart, VictoryAxis } from "victory";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import api from "../lib/api";
 
 interface FormInputs {
   scope: number;
   dp: number;
   bp: number;
-  email: string;
 }
 
 const InputField = ({ label, description, unit, register, error, ...props }) => (
@@ -65,8 +63,6 @@ const ResultCard = ({ label, currentValue, saiValue, isShifts }) => (
 const MAX_DP = 3501;
 
 export default function RoiCalc() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   const {
@@ -94,31 +90,6 @@ export default function RoiCalc() {
   
   const profit = (costPerFootOld - costPerFootSai) * scope;
   const additionalProfit = (normalShifts - saiShifts) * (saiDP * bp);
-
-  const onSubmit = async (data: FormInputs) => {
-    try {
-      setIsSubmitting(true);
-      await api.postROIEmail({
-        body: {
-          projectScope: scope,
-          footPerShift: data.dp,
-          bidPrice: data.bp.toFixed(2),
-          theirCostPerFoot: costPerFootOld.toFixed(2),
-          saiCostPerFoot: costPerFootSai.toFixed(2),
-          shiftsSAI: saiShifts.toFixed(2),
-          theirShifts: normalShifts.toFixed(2),
-          email: data.email,
-          savings: profit.toFixed(2),
-          additionalProfit: additionalProfit.toFixed(2),
-        },
-      });
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Failed to submit:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="space-y-8">
@@ -235,52 +206,6 @@ export default function RoiCalc() {
           </div>
         </div>
       )}
-
-      <div className="card bg-gray-50">
-        {submitted ? (
-          <div className="text-center">
-            <h3 className="text-2xl font-semibold text-success mb-4">
-              Thank you for your interest!
-            </h3>
-            <p className="text-gray-600">
-              One of our experts will be in touch shortly to discuss how we can help optimize your operations.
-            </p>
-          </div>
-        ) : (
-          <div className="text-center">
-            <h3 className="text-xl font-semibold mb-4">
-              Want a Detailed Analysis?
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Get a customized report for your specific business needs.
-            </p>
-            <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="input-field mb-4"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address',
-                  },
-                })}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mb-4">{errors.email.message}</p>
-              )}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn-primary w-full"
-              >
-                {isSubmitting ? 'Sending...' : 'Get Custom Analysis'}
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
     </div>
   );
 } 
